@@ -8,11 +8,6 @@ use Illuminate\Routing\Controller;
 class AuthController extends Controller
 {
 
-    public function __construct()
-    {
-        $this->middleware('auth', ['except' => ['login']]);
-    }
-
     public function login(AuthRequest $request)
     {
         $credentials = request(['username', 'password']);
