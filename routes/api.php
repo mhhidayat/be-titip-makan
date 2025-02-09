@@ -10,3 +10,6 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('/refresh', [AuthController::class, 'refresh']);
 });
 
+Route::group(['prefix' => 'd'], function () {
+
+});
