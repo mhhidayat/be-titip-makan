@@ -1,0 +1,136 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Titip Makan RESTful API",
+        "description": "API Spec for Titip Makan RESTful API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000/api"
+        }
+    ],
+    "paths": {
+        "/login": {
+            "post": {
+                "tags": ["Authentication"],
+                "description": "Login",
+                "summary": "Login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "phone_number": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }       
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success Login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "default": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string"
+                                                },
+                                                "users": {
+                                                    "$ref": "#/components/schemas/UserData"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "security": [{
+                    "TitipMakanAuth" : []
+                }],
+                "tags": ["Authentication"],
+                "description": "Get users data detail",
+                "summary": "Get users data detail",
+                "responses": {
+                    "200": {
+                        "description": "Getting data users detail",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "default": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "users": {
+                                                    "$ref": "#/components/schemas/UserData"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "TitipMakanAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization",
+                "description": "Authentication for Titip Makan API"
+            }
+        },
+        "schemas": {
+            "UserData": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name":{
+                        "type": "string"
+                    },
+                    "phone_number":{
+                        "type": "string"
+                    }
+                }  
+            }
+        }
+    }
+}
