@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"be-titip-makan/domain"
+	"be-titip-makan/domain/user"
 	"context"
 	"database/sql"
 
@@ -12,14 +12,14 @@ type usersRepository struct {
 	db *goqu.Database
 }
 
-func NewUsers(con *sql.DB) domain.UsersRepository {
+func NewUsers(con *sql.DB) user.UsersRepository {
 	return &usersRepository{
 		db: goqu.New("default", con),
 	}
 }
 
-func (ur usersRepository) FindByPhoneNumberAndPassword(ctx context.Context, phoneNumber string, password string) (*domain.Users, error) {
-	result := domain.Users{}
+func (ur usersRepository) FindByPhoneNumberAndPassword(ctx context.Context, phoneNumber string, password string) (*user.Model, error) {
+	result := user.Model{}
 
 	expresion := goqu.Ex{
 		"phone_number": phoneNumber,
