@@ -1,7 +1,7 @@
-package util
+package jwtutil
 
 import (
-	"be-titip-makan/internal/config"
+	"be-titip-makan/configs"
 	"errors"
 	"strconv"
 	"time"
@@ -9,16 +9,16 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type Claims struct {
-	UserID      string `json:"id"`
-	Name        string `json:"name"`
-	PhoneNumber string `json:"phone_number"`
-	jwt.RegisteredClaims
-}
-
-func GenerateToken(userID, name string, phoneNumber string, configAuth config.Auth) (string, error) {
+func GenerateToken(userID, name string, phoneNumber string, configAuth configs.Auth) (string, error) {
 	ET, _ := strconv.Atoi(configAuth.JwtET)
 	expirationTime := time.Now().Add(time.Second * time.Duration(ET))
+
+	type Claims struct {
+		UserID      string `json:"id"`
+		Name        string `json:"name"`
+		PhoneNumber string `json:"phone_number"`
+		jwt.RegisteredClaims
+	}
 
 	claims := &Claims{
 		UserID:      userID,
@@ -34,7 +34,7 @@ func GenerateToken(userID, name string, phoneNumber string, configAuth config.Au
 	return token.SignedString([]byte(configAuth.JwtScret))
 }
 
-func VerifyToken(tokenString string, configAuth config.Auth) error {
+func VerifyToken(tokenString string, configAuth configs.Auth) error {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
 		return []byte(configAuth.JwtScret), nil
 	})
@@ -50,7 +50,7 @@ func VerifyToken(tokenString string, configAuth config.Auth) error {
 	return nil
 }
 
-func ExtractClaims(tokenStr string, configAuth config.Auth) (jwt.MapClaims, error) {
+func ExtractClaims(tokenStr string, configAuth configs.Auth) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		return []byte(configAuth.JwtScret), nil
 	})

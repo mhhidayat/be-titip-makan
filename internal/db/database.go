@@ -1,14 +1,14 @@
-package connection
+package db
 
 import (
-	"be-titip-makan/internal/config"
+	"be-titip-makan/configs"
 	"database/sql"
 	"fmt"
 
 	_ "github.com/lib/pq"
 )
 
-func GetDatabase(conf config.Database) *sql.DB {
+func GetDatabase(conf configs.Database) *sql.DB {
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=%s",
 		conf.Host, conf.Port, conf.User, conf.Pass, conf.Name, conf.Tz)
 

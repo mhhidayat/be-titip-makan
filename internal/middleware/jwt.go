@@ -1,27 +1,27 @@
 package middleware
 
 import (
-	"be-titip-makan/internal/config"
-	"be-titip-makan/internal/util"
-	"be-titip-makan/internal/util/response"
+	"be-titip-makan/configs"
+	"be-titip-makan/internal/jsonutil"
+	"be-titip-makan/internal/jwtutil"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func JWTProtected(ctx *fiber.Ctx, configAuth *config.Auth) error {
+func JWTProtected(ctx *fiber.Ctx, configAuth *configs.Auth) error {
 	tokenString := ctx.Get("Authorization")
 
 	if tokenString == "" {
 		return ctx.Status(http.StatusBadRequest).
-			JSON(response.ErrorResponse("Missing authorization"))
+			JSON(jsonutil.ErrorResponse("Missing authorization"))
 	}
 
-	err := util.VerifyToken(tokenString, *configAuth)
+	err := jwtutil.VerifyToken(tokenString, *configAuth)
 
 	if err != nil {
 		return ctx.Status(http.StatusUnauthorized).
-			JSON(response.ErrorResponse("Invalid token"))
+			JSON(jsonutil.ErrorResponse("Invalid token"))
 	}
 
 	return ctx.Next()

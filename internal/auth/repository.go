@@ -1,24 +1,24 @@
-package repository
+package auth
 
 import (
-	"be-titip-makan/domain/user"
+	"be-titip-makan/internal/user"
 	"context"
 	"database/sql"
 
 	"github.com/doug-martin/goqu/v9"
 )
 
-type usersRepository struct {
+type authRepository struct {
 	db *goqu.Database
 }
 
-func NewUsers(con *sql.DB) user.UsersRepository {
-	return &usersRepository{
+func NewAuthRepository(con *sql.DB) AuthRepository {
+	return &authRepository{
 		db: goqu.New("default", con),
 	}
 }
 
-func (ur usersRepository) FindByPhoneNumberAndPassword(ctx context.Context, phoneNumber string, password string) (*user.Model, error) {
+func (ur authRepository) Login(ctx context.Context, phoneNumber string, password string) (*user.Model, error) {
 	result := user.Model{}
 
 	expresion := goqu.Ex{

@@ -1,4 +1,4 @@
-package response
+package jsonutil
 
 type response[T any] struct {
 	Status  bool   `json:"status"`
