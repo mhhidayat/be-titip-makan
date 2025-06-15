@@ -2,10 +2,10 @@ package main
 
 import (
 	"be-titip-makan/configs"
-	"be-titip-makan/internal/auth"
+	"be-titip-makan/internal/feature/auth"
 	"be-titip-makan/internal/db"
 	"be-titip-makan/internal/middleware"
-	"be-titip-makan/internal/user"
+	"be-titip-makan/internal/feature/user"
 
 	"github.com/gofiber/fiber/v2"
 )

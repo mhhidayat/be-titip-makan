@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"be-titip-makan/internal/user"
+	"be-titip-makan/internal/feature/user"
 	"context"
 	"database/sql"
 

@@ -4,7 +4,7 @@ import (
 	"be-titip-makan/configs"
 	"be-titip-makan/internal/jsonutil"
 	"be-titip-makan/internal/jwtutil"
-	"be-titip-makan/internal/user"
+	"be-titip-makan/internal/feature/user"
 	"context"
 	"net/http"
 	"time"
