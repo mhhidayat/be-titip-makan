@@ -144,6 +144,59 @@
                     }
                 }
             }
+        },
+        "/restaurants": {
+            "get": {
+                "security": [{
+                    "TitipMakanAuth" : []
+                }],
+                "tags": ["Dashboard"],
+                "description": "Get restaurants by categories",
+                "summary": "Get Get restaurants by categories",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "category_id": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }       
+                },
+                "responses": {
+                    "200": {
+                        "description": "Getting data restaurants by categories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "default": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "categories": {
+                                                    "$ref": "#/components/schemas/RestaurantData"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -177,6 +230,20 @@
                         "type": "string"
                     },
                     "name":{
+                        "type": "string"
+                    }
+                }  
+            },
+            "RestaurantData": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name":{
+                        "type": "string"
+                    },
+                    "category_id":{
                         "type": "string"
                     }
                 }  
