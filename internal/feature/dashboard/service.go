@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"be-titip-makan/internal/feature/category"
+	"be-titip-makan/internal/feature/menu"
 	"be-titip-makan/internal/feature/restaurant"
 	"context"
 )
@@ -44,6 +45,25 @@ func (ds *dashboardService) ListRestaurantByCategory(ctx context.Context, catego
 			ID:         v.ID,
 			Name:       v.Name,
 			CategoryID: v.CategoryID,
+		})
+	}
+
+	return &restaurantData, nil
+}
+
+func (ds *dashboardService) ListMenuByRestaurant(ctx context.Context, restaurantId string) (*[]menu.MenuData, error) {
+	menus, err := ds.dashboardRepository.ListMenuByRestaurant(ctx, restaurantId)
+	if err != nil {
+		return nil, err
+	}
+
+	var restaurantData []menu.MenuData
+	for _, v := range *menus {
+		restaurantData = append(restaurantData, menu.MenuData{
+			ID:           v.ID,
+			Name:         v.Name,
+			Price:        v.Price,
+			RestaurantID: v.RestaurantID,
 		})
 	}
 

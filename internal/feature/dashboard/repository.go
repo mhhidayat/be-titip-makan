@@ -2,6 +2,7 @@ package dashboard
 
 import (
 	"be-titip-makan/internal/feature/category"
+	"be-titip-makan/internal/feature/menu"
 	"be-titip-makan/internal/feature/restaurant"
 	"context"
 	"database/sql"
@@ -43,4 +44,18 @@ func (dr *dashboardRepository) ListRestaurantByCategory(ctx context.Context, cat
 	}
 
 	return &restaurant, nil
+}
+
+func (dr *dashboardRepository) ListMenuByRestaurant(ctx context.Context, restaurantId string) (*[]menu.Model, error) {
+	var menus []menu.Model
+
+	dataset := dr.db.From("mst_menus").Where(goqu.Ex{
+		"restaurant_id": restaurantId,
+	})
+
+	if err := dataset.ScanStructsContext(ctx, &menus); err != nil {
+		return nil, err
+	}
+
+	return &menus, nil
 }

@@ -1,6 +1,7 @@
 package dashboard
 
 import (
+	"be-titip-makan/internal/feature/menu"
 	"be-titip-makan/internal/feature/restaurant"
 	"be-titip-makan/internal/jsonutil"
 	"context"
@@ -22,6 +23,7 @@ func NewDashboard(router fiber.Router, dashboardService DashboardService) {
 
 	router.Get("/categories", ua.ListCategory)
 	router.Get("/restaurants", ua.ListRestaurant)
+	router.Get("/menus", ua.Menus)
 }
 
 func (dh *dashboardHandler) ListCategory(c *fiber.Ctx) error {
@@ -65,4 +67,29 @@ func (dh *dashboardHandler) ListRestaurant(c *fiber.Ctx) error {
 
 	return c.Status(http.StatusOK).
 		JSON(jsonutil.SuccessResponse("Restaurants fetched successfully", responseData))
+}
+
+func (dh *dashboardHandler) Menus(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
+	defer cancel()
+
+	req := menu.MenusByRestaurantRequest{}
+
+	if err := c.BodyParser(&req); err != nil || req.RestaurantID == "" {
+		return c.Status(http.StatusBadRequest).
+			JSON(jsonutil.ErrorResponse("Restaurant ID is required"))
+	}
+
+	menus, err := dh.dashboardService.ListMenuByRestaurant(ctx, req.RestaurantID)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).
+			JSON(jsonutil.ErrorResponse("Failed to fetch menus: " + err.Error()))
+	}
+
+	responseData := map[string]any{
+		"menus": menus,
+	}
+
+	return c.Status(http.StatusOK).
+		JSON(jsonutil.SuccessResponse("Menus fetched successfully", responseData))
 }
