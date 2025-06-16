@@ -67,7 +67,7 @@
                 }
             }
         },
-        "/users": {
+        "/user": {
             "get": {
                 "security": [{
                     "TitipMakanAuth" : []
@@ -105,6 +105,45 @@
                     }
                 }
             }
+        },
+        "/categories": {
+            "get": {
+                "security": [{
+                    "TitipMakanAuth" : []
+                }],
+                "tags": ["Dashboard"],
+                "description": "Get categories",
+                "summary": "Get categories",
+                "responses": {
+                    "200": {
+                        "description": "Getting data categories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "default": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "categories": {
+                                                    "$ref": "#/components/schemas/CategoriesData"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -127,6 +166,17 @@
                         "type": "string"
                     },
                     "phone_number":{
+                        "type": "string"
+                    }
+                }  
+            },
+            "CategoriesData": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name":{
                         "type": "string"
                     }
                 }  
