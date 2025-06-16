@@ -2,10 +2,11 @@ package main
 
 import (
 	"be-titip-makan/configs"
-	"be-titip-makan/internal/feature/auth"
 	"be-titip-makan/internal/db"
-	"be-titip-makan/internal/middleware"
+	"be-titip-makan/internal/feature/auth"
+	"be-titip-makan/internal/feature/dashboard"
 	"be-titip-makan/internal/feature/user"
+	"be-titip-makan/internal/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -30,6 +31,11 @@ func main() {
 	})
 
 	user.NewUser(protected, conf.Auth)
+
+	dashboardRepository := dashboard.NewDashboardRepository(dbConnection)
+	dashboardService := dashboard.NewDashboardService(dashboardRepository)
+
+	dashboard.NewDashboard(protected, dashboardService)
 
 	app.Listen(":3000")
 }
