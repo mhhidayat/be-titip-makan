@@ -32,6 +32,10 @@ func (dh *dashboardHandler) ListCategory(c *fiber.Ctx) error {
 			JSON(jsonutil.ErrorResponse("Failed to fetch categories: " + err.Error()))
 	}
 
+	responseData := map[string]any{
+		"categories": categories,
+	}
+
 	return c.Status(http.StatusOK).
-		JSON(jsonutil.SuccessResponse("Categories fetched successfully", categories))
+		JSON(jsonutil.SuccessResponse("Categories fetched successfully", responseData))
 }
