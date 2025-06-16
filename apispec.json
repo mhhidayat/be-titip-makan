@@ -152,7 +152,7 @@
                 }],
                 "tags": ["Dashboard"],
                 "description": "Get restaurants by categories",
-                "summary": "Get Get restaurants by categories",
+                "summary": "Get restaurants by categories",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -187,6 +187,59 @@
                                             "properties": {
                                                 "categories": {
                                                     "$ref": "#/components/schemas/RestaurantData"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/menus": {
+            "get": {
+                "security": [{
+                    "TitipMakanAuth" : []
+                }],
+                "tags": ["Dashboard"],
+                "description": "Get menus by restaurant",
+                "summary": "Get menus by restaurant",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "restaurant_id": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }       
+                },
+                "responses": {
+                    "200": {
+                        "description": "Getting data restaurants by categories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "default": true
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "categories": {
+                                                    "$ref": "#/components/schemas/MenusData"
                                                 }
                                             }
                                         }
@@ -244,6 +297,23 @@
                         "type": "string"
                     },
                     "category_id":{
+                        "type": "string"
+                    }
+                }  
+            },
+            "MenusData": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "price":{
+                        "type": "string"
+                    },
+                    "name":{
+                        "type": "string"
+                    },
+                    "restaurant_id":{
                         "type": "string"
                     }
                 }  
