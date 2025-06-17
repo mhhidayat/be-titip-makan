@@ -6,5 +6,5 @@ import (
 )
 
 type AuthRepository interface {
-	Login(ctx context.Context, phoneNumber string, password string) (*user.Model, error)
+	Login(ctx context.Context, username string, password string) (*user.Model, error)
 }

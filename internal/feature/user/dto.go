@@ -2,11 +2,12 @@ package user
 
 type UsersData struct {
 	ID          string `json:"id"`
+	Username    string `json:"username"`
 	Name        string `json:"name"`
 	PhoneNumber string `json:"phone_number"`
 }
 
 type LoginRequest struct {
-	PhoneNumber string `json:"phone_number"`
-	Password    string `json:"password"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }

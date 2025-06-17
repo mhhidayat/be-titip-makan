@@ -15,8 +15,8 @@ func NewAuthService(userRepository AuthRepository) AuthService {
 	}
 }
 
-func (ur authService) Login(ctx context.Context, PhoneNumber string, pasword string) (usersData *user.UsersData, err error) {
-	users, err := ur.usersRepository.Login(ctx, PhoneNumber, pasword)
+func (ur authService) Login(ctx context.Context, username string, pasword string) (usersData *user.UsersData, err error) {
+	users, err := ur.usersRepository.Login(ctx, username, pasword)
 
 	if err != nil {
 		return nil, err
@@ -28,6 +28,7 @@ func (ur authService) Login(ctx context.Context, PhoneNumber string, pasword str
 
 	usersData = &user.UsersData{
 		ID:          users.ID,
+		Username:    users.Username,
 		Name:        users.Name,
 		PhoneNumber: users.PhoneNumber,
 	}

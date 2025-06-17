@@ -9,12 +9,13 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateToken(userID, name string, phoneNumber string, configAuth configs.Auth) (string, error) {
+func GenerateToken(userID, name string, phoneNumber string, username string, configAuth configs.Auth) (string, error) {
 	ET, _ := strconv.Atoi(configAuth.JwtET)
 	expirationTime := time.Now().Add(time.Second * time.Duration(ET))
 
 	type Claims struct {
 		UserID      string `json:"id"`
+		Username    string `json:"username"`
 		Name        string `json:"name"`
 		PhoneNumber string `json:"phone_number"`
 		jwt.RegisteredClaims
@@ -22,6 +23,7 @@ func GenerateToken(userID, name string, phoneNumber string, configAuth configs.A
 
 	claims := &Claims{
 		UserID:      userID,
+		Username:    username,
 		Name:        name,
 		PhoneNumber: phoneNumber,
 		RegisteredClaims: jwt.RegisteredClaims{

@@ -2,9 +2,9 @@ package auth
 
 import (
 	"be-titip-makan/configs"
+	"be-titip-makan/internal/feature/user"
 	"be-titip-makan/internal/jsonutil"
 	"be-titip-makan/internal/jwtutil"
-	"be-titip-makan/internal/feature/user"
 	"context"
 	"net/http"
 	"time"
@@ -34,24 +34,19 @@ func (ua authHandler) Login(c *fiber.Ctx) error {
 
 	req := user.LoginRequest{}
 
-	if err := c.BodyParser(&req); err != nil {
+	if err := c.BodyParser(&req); err != nil || req.Username == "" || req.Password == "" {
 		return c.Status(http.StatusBadRequest).
-			JSON(jsonutil.ErrorResponse("Invalid request format"))
+			JSON(jsonutil.ErrorResponse("Username and password are required"))
 	}
 
-	if req.PhoneNumber == "" || req.Password == "" {
-		return c.Status(http.StatusBadRequest).
-			JSON(jsonutil.ErrorResponse("Phone Number or password should not be empty"))
-	}
-
-	userData, err := ua.authService.Login(ctx, req.PhoneNumber, req.Password)
+	userData, err := ua.authService.Login(ctx, req.Username, req.Password)
 
 	if err != nil || userData == nil {
 		return c.Status(http.StatusUnauthorized).
 			JSON(jsonutil.ErrorResponse("Invalid credentials, please check your username and password"))
 	}
 
-	tokenAuth, err := jwtutil.GenerateToken(userData.ID, userData.Name, userData.PhoneNumber, ua.configAuth)
+	tokenAuth, err := jwtutil.GenerateToken(userData.ID, userData.Name, userData.PhoneNumber, userData.Username, ua.configAuth)
 
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).

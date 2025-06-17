@@ -18,12 +18,12 @@ func NewAuthRepository(con *sql.DB) AuthRepository {
 	}
 }
 
-func (ur authRepository) Login(ctx context.Context, phoneNumber string, password string) (*user.Model, error) {
+func (ur authRepository) Login(ctx context.Context, username string, password string) (*user.Model, error) {
 	result := user.Model{}
 
 	expresion := goqu.Ex{
-		"phone_number": phoneNumber,
-		"password":     password,
+		"username": username,
+		"password": password,
 	}
 
 	dataset := ur.db.From("users").

@@ -35,6 +35,7 @@ func (ua userHandler) GetUserDetail(c *fiber.Ctx) error {
 
 	usersData := UsersData{
 		ID:          fmt.Sprintf("%v", dataClaims["id"]),
+		Username:    fmt.Sprintf("%v", dataClaims["username"]),
 		Name:        fmt.Sprintf("%v", dataClaims["name"]),
 		PhoneNumber: fmt.Sprintf("%v", dataClaims["phone_number"]),
 	}
