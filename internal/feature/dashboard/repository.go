@@ -23,7 +23,7 @@ func NewDashboardRepository(con *sql.DB) DashboardRepository {
 func (dr *dashboardRepository) ListCategory(ctx context.Context) (*[]category.Model, error) {
 	var categories []category.Model
 
-	dataset := dr.db.From("mst_categories").Select("*")
+	dataset := dr.db.From("mst_categories")
 
 	if err := dataset.ScanStructsContext(ctx, &categories); err != nil {
 		return nil, err
