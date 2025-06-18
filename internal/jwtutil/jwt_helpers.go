@@ -11,7 +11,7 @@ import (
 
 func GenerateToken(userID, name string, phoneNumber string, username string, configAuth configs.Auth) (string, error) {
 	ET, _ := strconv.Atoi(configAuth.JwtET)
-	expirationTime := time.Now().Add(time.Second * time.Duration(ET))
+	expirationTime := time.Now().Add(time.Hour * 24 * time.Duration(ET))
 
 	type Claims struct {
 		UserID      string `json:"id"`
