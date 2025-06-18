@@ -22,7 +22,7 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "phone_number": {
+                                    "username": {
                                         "type": "string"
                                     },
                                     "password": {
@@ -266,6 +266,9 @@
                 "type": "object",
                 "properties": {
                     "id": {
+                        "type": "string"
+                    },
+                    "username":{
                         "type": "string"
                     },
                     "name":{
