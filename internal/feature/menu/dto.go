@@ -8,5 +8,5 @@ type MenuData struct {
 }
 
 type MenusByRestaurantRequest struct {
-	RestaurantID string `json:"restaurant_id"`
+	RestaurantID string `json:"restaurant_id" validate:"required"`
 }

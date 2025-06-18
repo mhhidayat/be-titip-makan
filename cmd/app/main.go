@@ -8,12 +8,14 @@ import (
 	"be-titip-makan/internal/feature/user"
 	"be-titip-makan/internal/middleware"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
 
 	conf := configs.Get()
+	var validate = validator.New()
 
 	dbConnection := db.GetDatabase(conf.Database)
 
@@ -24,7 +26,7 @@ func main() {
 
 	apiGroup := app.Group("/api")
 
-	auth.NewAuth(apiGroup, authService, conf.Auth)
+	auth.NewAuth(apiGroup, authService, conf.Auth, validate)
 
 	protected := apiGroup.Group("/", func(c *fiber.Ctx) error {
 		return middleware.JWTProtected(c, &conf.Auth)
@@ -35,7 +37,7 @@ func main() {
 	dashboardRepository := dashboard.NewDashboardRepository(dbConnection)
 	dashboardService := dashboard.NewDashboardService(dashboardRepository)
 
-	dashboard.NewDashboard(protected, dashboardService)
+	dashboard.NewDashboard(protected, dashboardService, validate)
 
 	app.Listen(":3000")
 }

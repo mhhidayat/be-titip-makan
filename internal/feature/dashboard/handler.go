@@ -8,17 +8,20 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
 type dashboardHandler struct {
 	dashboardService DashboardService
+	validate         *validator.Validate
 }
 
-func NewDashboard(router fiber.Router, dashboardService DashboardService) {
+func NewDashboard(router fiber.Router, dashboardService DashboardService, validate *validator.Validate) {
 
 	ua := dashboardHandler{
 		dashboardService: dashboardService,
+		validate:         validate,
 	}
 
 	router.Get("/categories", ua.ListCategory)
@@ -36,12 +39,10 @@ func (dh *dashboardHandler) ListCategory(c *fiber.Ctx) error {
 			JSON(jsonutil.ErrorResponse("Failed to fetch categories: " + err.Error()))
 	}
 
-	responseData := map[string]any{
-		"categories": categories,
-	}
-
 	return c.Status(http.StatusOK).
-		JSON(jsonutil.SuccessResponse("Categories fetched successfully", responseData))
+		JSON(jsonutil.SuccessResponse("Categories fetched successfully", fiber.Map{
+			"categories": categories,
+		}))
 }
 
 func (dh *dashboardHandler) ListRestaurant(c *fiber.Ctx) error {
@@ -50,9 +51,14 @@ func (dh *dashboardHandler) ListRestaurant(c *fiber.Ctx) error {
 
 	req := restaurant.RestaurantByCategoryRequest{}
 
-	if err := c.BodyParser(&req); err != nil || req.CategoryID == "" {
-		return c.Status(http.StatusBadRequest).
-			JSON(jsonutil.ErrorResponse("Category ID is required"))
+	c.BodyParser(&req)
+
+	err := dh.validate.Struct(req)
+	if validationErrors, ok := err.(validator.ValidationErrors); ok {
+		mappingErros := jsonutil.MappingErrors(validationErrors)
+		return c.Status(http.StatusBadRequest).JSON(jsonutil.ValidationErrorResponse(fiber.Map{
+			"errors": mappingErros,
+		}))
 	}
 
 	restaurants, err := dh.dashboardService.ListRestaurantByCategory(ctx, req.CategoryID)
@@ -61,12 +67,10 @@ func (dh *dashboardHandler) ListRestaurant(c *fiber.Ctx) error {
 			JSON(jsonutil.ErrorResponse("Failed to fetch restaurants: " + err.Error()))
 	}
 
-	responseData := map[string]any{
-		"restaurants": restaurants,
-	}
-
 	return c.Status(http.StatusOK).
-		JSON(jsonutil.SuccessResponse("Restaurants fetched successfully", responseData))
+		JSON(jsonutil.SuccessResponse("Restaurants fetched successfully", fiber.Map{
+			"restaurants": restaurants,
+		}))
 }
 
 func (dh *dashboardHandler) Menus(c *fiber.Ctx) error {
@@ -75,9 +79,14 @@ func (dh *dashboardHandler) Menus(c *fiber.Ctx) error {
 
 	req := menu.MenusByRestaurantRequest{}
 
-	if err := c.BodyParser(&req); err != nil || req.RestaurantID == "" {
-		return c.Status(http.StatusBadRequest).
-			JSON(jsonutil.ErrorResponse("Restaurant ID is required"))
+	c.BodyParser(&req)
+
+	err := dh.validate.Struct(req)
+	if validationErrors, ok := err.(validator.ValidationErrors); ok {
+		mappingErros := jsonutil.MappingErrors(validationErrors)
+		return c.Status(http.StatusBadRequest).JSON(jsonutil.ValidationErrorResponse(fiber.Map{
+			"errors": mappingErros,
+		}))
 	}
 
 	menus, err := dh.dashboardService.ListMenuByRestaurant(ctx, req.RestaurantID)
@@ -86,10 +95,8 @@ func (dh *dashboardHandler) Menus(c *fiber.Ctx) error {
 			JSON(jsonutil.ErrorResponse("Failed to fetch menus: " + err.Error()))
 	}
 
-	responseData := map[string]any{
-		"menus": menus,
-	}
-
 	return c.Status(http.StatusOK).
-		JSON(jsonutil.SuccessResponse("Menus fetched successfully", responseData))
+		JSON(jsonutil.SuccessResponse("Menus fetched successfully", fiber.Map{
+			"menus": menus,
+		}))
 }

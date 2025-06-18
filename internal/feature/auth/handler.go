@@ -9,19 +9,22 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
 type authHandler struct {
 	authService AuthService
 	configAuth  configs.Auth
+	validate    *validator.Validate
 }
 
-func NewAuth(router fiber.Router, authService AuthService, configAuth configs.Auth) {
+func NewAuth(router fiber.Router, authService AuthService, configAuth configs.Auth, validate *validator.Validate) {
 
 	ua := authHandler{
 		authService: authService,
 		configAuth:  configAuth,
+		validate:    validate,
 	}
 
 	router.Post("login", ua.Login)
@@ -34,9 +37,15 @@ func (ua authHandler) Login(c *fiber.Ctx) error {
 
 	req := user.LoginRequest{}
 
-	if err := c.BodyParser(&req); err != nil || req.Username == "" || req.Password == "" {
-		return c.Status(http.StatusBadRequest).
-			JSON(jsonutil.ErrorResponse("Username and password are required"))
+	c.BodyParser(&req)
+
+	err := ua.validate.Struct(req)
+	if validationErrors, ok := err.(validator.ValidationErrors); ok {
+		mappingErros := jsonutil.MappingErrors(validationErrors)
+		return c.Status(fiber.StatusBadRequest).
+			JSON(jsonutil.ValidationErrorResponse(fiber.Map{
+				"errors": mappingErros,
+			}))
 	}
 
 	userData, err := ua.authService.Login(ctx, req.Username, req.Password)
@@ -53,12 +62,10 @@ func (ua authHandler) Login(c *fiber.Ctx) error {
 			JSON(jsonutil.ErrorResponse("Failed to generate token"))
 	}
 
-	responseData := map[string]any{
-		"users": userData,
-		"token": tokenAuth,
-	}
-
 	return c.Status(http.StatusOK).
-		JSON(jsonutil.SuccessResponse("Login successful", responseData))
+		JSON(jsonutil.SuccessResponse("Login successful", fiber.Map{
+			"users": userData,
+			"token": tokenAuth,
+		}))
 
 }

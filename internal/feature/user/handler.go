@@ -40,10 +40,8 @@ func (ua userHandler) GetUserDetail(c *fiber.Ctx) error {
 		PhoneNumber: fmt.Sprintf("%v", dataClaims["phone_number"]),
 	}
 
-	responseData := map[string]UsersData{
-		"user": usersData,
-	}
-
 	return c.Status(http.StatusOK).
-		JSON(jsonutil.SuccessResponse("Succes get user data", responseData))
+		JSON(jsonutil.SuccessResponse("Succes get user data", fiber.Map{
+			"user": usersData,
+		}))
 }

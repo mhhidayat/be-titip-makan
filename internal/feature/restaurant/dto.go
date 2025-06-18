@@ -7,5 +7,5 @@ type RestaurantData struct {
 }
 
 type RestaurantByCategoryRequest struct {
-	CategoryID string `json:"category_id"`
+	CategoryID string `json:"category_id" validate:"required"`
 }
