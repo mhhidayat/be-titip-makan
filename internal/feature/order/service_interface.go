@@ -1,4 +1,4 @@
-package dashboard
+package order
 
 import (
 	"be-titip-makan/internal/feature/category"
@@ -7,7 +7,7 @@ import (
 	"context"
 )
 
-type DashboardService interface {
+type OrderService interface {
 	ListCategory(ctx context.Context) (*[]category.CategoryData, error)
 	ListRestaurantByCategory(ctx context.Context, categoryId string) (*[]restaurant.RestaurantData, error)
 	ListMenuByRestaurant(ctx context.Context, restaurantId string) (*[]menu.MenuData, error)

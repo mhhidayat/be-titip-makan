@@ -1,4 +1,4 @@
-package dashboard
+package order
 
 import (
 	"be-titip-makan/internal/feature/category"
@@ -7,17 +7,17 @@ import (
 	"context"
 )
 
-type dashboardService struct {
-	dashboardRepository DashboardRepository
+type orderService struct {
+	orderRepository OrderRepository
 }
 
-func NewDashboardService(dashboardRepository DashboardRepository) DashboardService {
-	return &dashboardService{
-		dashboardRepository: dashboardRepository,
+func NewOrderService(orderRepository OrderRepository) OrderService {
+	return &orderService{
+		orderRepository: orderRepository,
 	}
 }
-func (ds *dashboardService) ListCategory(ctx context.Context) (*[]category.CategoryData, error) {
-	categories, err := ds.dashboardRepository.ListCategory(ctx)
+func (os *orderService) ListCategory(ctx context.Context) (*[]category.CategoryData, error) {
+	categories, err := os.orderRepository.ListCategory(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -33,8 +33,8 @@ func (ds *dashboardService) ListCategory(ctx context.Context) (*[]category.Categ
 	return &categoriesData, nil
 }
 
-func (ds *dashboardService) ListRestaurantByCategory(ctx context.Context, categoryId string) (*[]restaurant.RestaurantData, error) {
-	restaurants, err := ds.dashboardRepository.ListRestaurantByCategory(ctx, categoryId)
+func (os *orderService) ListRestaurantByCategory(ctx context.Context, categoryId string) (*[]restaurant.RestaurantData, error) {
+	restaurants, err := os.orderRepository.ListRestaurantByCategory(ctx, categoryId)
 	if err != nil {
 		return nil, err
 	}
@@ -51,8 +51,8 @@ func (ds *dashboardService) ListRestaurantByCategory(ctx context.Context, catego
 	return &restaurantData, nil
 }
 
-func (ds *dashboardService) ListMenuByRestaurant(ctx context.Context, restaurantId string) (*[]menu.MenuData, error) {
-	menus, err := ds.dashboardRepository.ListMenuByRestaurant(ctx, restaurantId)
+func (os *orderService) ListMenuByRestaurant(ctx context.Context, restaurantId string) (*[]menu.MenuData, error) {
+	menus, err := os.orderRepository.ListMenuByRestaurant(ctx, restaurantId)
 	if err != nil {
 		return nil, err
 	}

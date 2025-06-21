@@ -4,7 +4,7 @@ import (
 	"be-titip-makan/configs"
 	"be-titip-makan/internal/db"
 	"be-titip-makan/internal/feature/auth"
-	"be-titip-makan/internal/feature/dashboard"
+	"be-titip-makan/internal/feature/order"
 	"be-titip-makan/internal/feature/user"
 	"be-titip-makan/internal/middleware"
 
@@ -34,10 +34,10 @@ func main() {
 
 	user.NewUser(protected, conf.Auth)
 
-	dashboardRepository := dashboard.NewDashboardRepository(dbConnection)
-	dashboardService := dashboard.NewDashboardService(dashboardRepository)
+	orderRepository := order.NewOrderRepository(dbConnection)
+	orderService := order.NewOrderService(orderRepository)
 
-	dashboard.NewDashboard(protected, dashboardService, validate)
+	order.NewOrder(protected, orderService, validate)
 
 	app.Listen(":3000")
 }

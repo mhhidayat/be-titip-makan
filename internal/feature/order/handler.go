@@ -1,4 +1,4 @@
-package dashboard
+package order
 
 import (
 	"be-titip-makan/internal/feature/menu"
@@ -12,28 +12,28 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type dashboardHandler struct {
-	dashboardService DashboardService
-	validate         *validator.Validate
+type orderHandler struct {
+	orderService OrderService
+	validate     *validator.Validate
 }
 
-func NewDashboard(router fiber.Router, dashboardService DashboardService, validate *validator.Validate) {
+func NewOrder(router fiber.Router, orderService OrderService, validate *validator.Validate) {
 
-	ua := dashboardHandler{
-		dashboardService: dashboardService,
-		validate:         validate,
+	oh := orderHandler{
+		orderService: orderService,
+		validate:     validate,
 	}
 
-	router.Get("/categories", ua.ListCategory)
-	router.Get("/restaurants", ua.ListRestaurant)
-	router.Get("/menus", ua.Menus)
+	router.Get("/categories", oh.ListCategory)
+	router.Get("/restaurants", oh.ListRestaurant)
+	router.Get("/menus", oh.Menus)
 }
 
-func (dh *dashboardHandler) ListCategory(c *fiber.Ctx) error {
+func (dh *orderHandler) ListCategory(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
 	defer cancel()
 
-	categories, err := dh.dashboardService.ListCategory(ctx)
+	categories, err := dh.orderService.ListCategory(ctx)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).
 			JSON(jsonutil.ErrorResponse("Failed to fetch categories: " + err.Error()))
@@ -45,7 +45,7 @@ func (dh *dashboardHandler) ListCategory(c *fiber.Ctx) error {
 		}))
 }
 
-func (dh *dashboardHandler) ListRestaurant(c *fiber.Ctx) error {
+func (dh *orderHandler) ListRestaurant(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
 	defer cancel()
 
@@ -61,7 +61,7 @@ func (dh *dashboardHandler) ListRestaurant(c *fiber.Ctx) error {
 		}))
 	}
 
-	restaurants, err := dh.dashboardService.ListRestaurantByCategory(ctx, req.CategoryID)
+	restaurants, err := dh.orderService.ListRestaurantByCategory(ctx, req.CategoryID)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).
 			JSON(jsonutil.ErrorResponse("Failed to fetch restaurants: " + err.Error()))
@@ -73,7 +73,7 @@ func (dh *dashboardHandler) ListRestaurant(c *fiber.Ctx) error {
 		}))
 }
 
-func (dh *dashboardHandler) Menus(c *fiber.Ctx) error {
+func (dh *orderHandler) Menus(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
 	defer cancel()
 
@@ -89,7 +89,7 @@ func (dh *dashboardHandler) Menus(c *fiber.Ctx) error {
 		}))
 	}
 
-	menus, err := dh.dashboardService.ListMenuByRestaurant(ctx, req.RestaurantID)
+	menus, err := dh.orderService.ListMenuByRestaurant(ctx, req.RestaurantID)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).
 			JSON(jsonutil.ErrorResponse("Failed to fetch menus: " + err.Error()))

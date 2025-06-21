@@ -1,4 +1,4 @@
-package dashboard
+package order
 
 import (
 	"be-titip-makan/internal/feature/category"
@@ -10,17 +10,17 @@ import (
 	"github.com/doug-martin/goqu/v9"
 )
 
-type dashboardRepository struct {
+type orderRepository struct {
 	db *goqu.Database
 }
 
-func NewDashboardRepository(con *sql.DB) DashboardRepository {
-	return &dashboardRepository{
+func NewOrderRepository(con *sql.DB) OrderRepository {
+	return &orderRepository{
 		db: goqu.New("default", con),
 	}
 }
 
-func (dr *dashboardRepository) ListCategory(ctx context.Context) (*[]category.Model, error) {
+func (dr *orderRepository) ListCategory(ctx context.Context) (*[]category.Model, error) {
 	var categories []category.Model
 
 	dataset := dr.db.From("mst_categories")
@@ -32,7 +32,7 @@ func (dr *dashboardRepository) ListCategory(ctx context.Context) (*[]category.Mo
 	return &categories, nil
 }
 
-func (dr *dashboardRepository) ListRestaurantByCategory(ctx context.Context, categoryId string) (*[]restaurant.Model, error) {
+func (dr *orderRepository) ListRestaurantByCategory(ctx context.Context, categoryId string) (*[]restaurant.Model, error) {
 	var restaurant []restaurant.Model
 
 	dataset := dr.db.From("mst_restaurants").Where(goqu.Ex{
@@ -46,7 +46,7 @@ func (dr *dashboardRepository) ListRestaurantByCategory(ctx context.Context, cat
 	return &restaurant, nil
 }
 
-func (dr *dashboardRepository) ListMenuByRestaurant(ctx context.Context, restaurantId string) (*[]menu.Model, error) {
+func (dr *orderRepository) ListMenuByRestaurant(ctx context.Context, restaurantId string) (*[]menu.Model, error) {
 	var menus []menu.Model
 
 	dataset := dr.db.From("mst_menus").Where(goqu.Ex{
