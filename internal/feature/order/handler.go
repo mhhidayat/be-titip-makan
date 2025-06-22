@@ -27,6 +27,7 @@ func NewOrder(router fiber.Router, orderService OrderService, validate *validato
 	router.Get("/categories", oh.ListCategory)
 	router.Get("/restaurants", oh.ListRestaurant)
 	router.Get("/menus", oh.Menus)
+	router.Post("/order", oh.Order)
 }
 
 func (dh *orderHandler) ListCategory(c *fiber.Ctx) error {
@@ -98,5 +99,34 @@ func (dh *orderHandler) Menus(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).
 		JSON(jsonutil.SuccessResponse("Menus fetched successfully", fiber.Map{
 			"menus": menus,
+		}))
+}
+
+func (dh *orderHandler) Order(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
+	defer cancel()
+
+	req := OrderRequest{}
+
+	c.BodyParser(&req)
+
+	err := dh.validate.Struct(req)
+	if validationErrors, ok := err.(validator.ValidationErrors); ok {
+		mappingErros := jsonutil.MappingErrors(validationErrors)
+		return c.Status(http.StatusBadRequest).JSON(jsonutil.ValidationErrorResponse(fiber.Map{
+			"errors": mappingErros,
+		}))
+	}
+
+	createOrders, err := dh.orderService.Order(ctx, req)
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).
+			JSON(jsonutil.ErrorResponse("Failed to store order: " + err.Error()))
+	}
+
+	return c.Status(http.StatusOK).
+		JSON(jsonutil.SuccessResponse("Order stored successfully", fiber.Map{
+			"orders": createOrders,
 		}))
 }

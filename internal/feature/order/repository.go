@@ -6,6 +6,8 @@ import (
 	"be-titip-makan/internal/feature/restaurant"
 	"context"
 	"database/sql"
+	"fmt"
+	"time"
 
 	"github.com/doug-martin/goqu/v9"
 )
@@ -58,4 +60,25 @@ func (dr *orderRepository) ListMenuByRestaurant(ctx context.Context, restaurantI
 	}
 
 	return &menus, nil
+}
+
+func (dr *orderRepository) Order(ctx context.Context, orderRequest OrderRequest) (*CreateOrder, error) {
+
+	createOrder := CreateOrder{
+		OrderNumber:   fmt.Sprintf("%sORD%s", orderRequest.UserID, fmt.Sprint(time.Now().Unix())),
+		UserID:        orderRequest.UserID,
+		PaymentStatus: orderRequest.PaymentStatus,
+		TotalAmount:   orderRequest.TotalAmount,
+		PaymentMethod: orderRequest.PaymentMethod,
+	}
+
+	fmt.Println(createOrder)
+
+	if _, err := dr.db.Insert("tr_orders").
+		Rows(&createOrder).
+		Executor().ExecContext(ctx); err != nil {
+		return nil, err
+	}
+
+	return &createOrder, nil
 }

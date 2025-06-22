@@ -69,3 +69,11 @@ func (os *orderService) ListMenuByRestaurant(ctx context.Context, restaurantId s
 
 	return &restaurantData, nil
 }
+
+func (os *orderService) Order(ctx context.Context, orderRequest OrderRequest) (*CreateOrder, error) {
+	createOrders, err := os.orderRepository.Order(ctx, orderRequest)
+	if err != nil {
+		return nil, err
+	}
+	return createOrders, nil
+}
