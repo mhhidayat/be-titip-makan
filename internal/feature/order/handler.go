@@ -118,7 +118,7 @@ func (dh *orderHandler) Order(c *fiber.Ctx) error {
 		}))
 	}
 
-	createOrders, err := dh.orderService.Order(ctx, req)
+	createOrders, err := dh.orderService.Order(ctx, &req)
 
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).

@@ -63,19 +63,17 @@ func (dr *orderRepository) ListMenuByRestaurant(ctx context.Context, restaurantI
 	return &menus, nil
 }
 
-func (dr *orderRepository) Order(ctx context.Context, orderRequest OrderRequest) (*CreateOrder, error) {
+func (dr *orderRepository) Order(ctx context.Context, orderRequest *OrderRequest) (*CreateOrderData, error) {
 
-	orderNumber := fmt.Sprintf("%s%s", time.Now().Format("060102"), strutil.GenerateRandomString(3))
+	orderNumber := fmt.Sprintf("ORD%s%s", time.Now().Format("060102"), strutil.GenerateRandomString(3))
 
 	createOrder := CreateOrder{
-		OrderNumber:   fmt.Sprintf("ORD%s", orderNumber),
+		OrderNumber:   orderNumber,
 		UserID:        orderRequest.UserID,
 		PaymentStatus: orderRequest.PaymentStatus,
 		TotalAmount:   orderRequest.TotalAmount,
 		PaymentMethod: orderRequest.PaymentMethod,
 	}
-
-	fmt.Println(createOrder)
 
 	if _, err := dr.db.Insert("tr_orders").
 		Rows(&createOrder).
@@ -83,5 +81,26 @@ func (dr *orderRepository) Order(ctx context.Context, orderRequest OrderRequest)
 		return nil, err
 	}
 
-	return &createOrder, nil
+	createOrderDetail := make([]CreateOrderDetail, 0, len(orderRequest.Detail))
+
+	for _, val := range orderRequest.Detail {
+		createOrderDetail = append(createOrderDetail, CreateOrderDetail{
+			OrderNumber: orderNumber,
+			MenuID:      val.MenuID,
+			Qty:         val.Qty,
+			Price:       val.Price,
+			Description: val.Description,
+		})
+	}
+
+	if _, err := dr.db.Insert("tr_order_details").
+		Rows(createOrderDetail).
+		Executor().ExecContext(ctx); err != nil {
+		return nil, err
+	}
+
+	return &CreateOrderData{
+		CreateOrder: createOrder,
+		Detail:      createOrderDetail,
+	}, nil
 }
