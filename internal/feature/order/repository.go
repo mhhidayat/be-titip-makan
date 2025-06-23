@@ -4,6 +4,7 @@ import (
 	"be-titip-makan/internal/feature/category"
 	"be-titip-makan/internal/feature/menu"
 	"be-titip-makan/internal/feature/restaurant"
+	"be-titip-makan/internal/strutil"
 	"context"
 	"database/sql"
 	"fmt"
@@ -64,8 +65,10 @@ func (dr *orderRepository) ListMenuByRestaurant(ctx context.Context, restaurantI
 
 func (dr *orderRepository) Order(ctx context.Context, orderRequest OrderRequest) (*CreateOrder, error) {
 
+	orderNumber := fmt.Sprintf("%s%s", time.Now().Format("060102"), strutil.GenerateRandomString(3))
+
 	createOrder := CreateOrder{
-		OrderNumber:   fmt.Sprintf("%sORD%s", orderRequest.UserID, fmt.Sprint(time.Now().Unix())),
+		OrderNumber:   fmt.Sprintf("ORD%s", orderNumber),
 		UserID:        orderRequest.UserID,
 		PaymentStatus: orderRequest.PaymentStatus,
 		TotalAmount:   orderRequest.TotalAmount,
