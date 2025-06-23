@@ -12,4 +12,5 @@ type OrderRepository interface {
 	ListRestaurantByCategory(ctx context.Context, categoryId string) (*[]restaurant.Model, error)
 	ListMenuByRestaurant(ctx context.Context, restaurantId string) (*[]menu.Model, error)
 	Order(ctx context.Context, orderRequest *OrderRequest) (*CreateOrderData, error)
+	DeleteDetailOrder(ctx context.Context, deleteOrderDetail *DeleteDetailOrder) error
 }

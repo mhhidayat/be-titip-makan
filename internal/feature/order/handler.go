@@ -28,6 +28,7 @@ func NewOrder(router fiber.Router, orderService OrderService, validate *validato
 	router.Get("/restaurants", oh.ListRestaurant)
 	router.Get("/menus", oh.Menus)
 	router.Post("/order", oh.Order)
+	router.Delete("/delete-detail-order", oh.DeleteDetailOrder)
 }
 
 func (dh *orderHandler) ListCategory(c *fiber.Ctx) error {
@@ -129,4 +130,30 @@ func (dh *orderHandler) Order(c *fiber.Ctx) error {
 		JSON(jsonutil.SuccessResponse("Order stored successfully", fiber.Map{
 			"orders": createOrders,
 		}))
+}
+
+func (dh *orderHandler) DeleteDetailOrder(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(c.Context(), 10*time.Second)
+	defer cancel()
+
+	req := DeleteDetailOrder{}
+
+	c.BodyParser(&req)
+
+	err := dh.validate.Struct(req)
+	if validationErrors, ok := err.(validator.ValidationErrors); ok {
+		mappingErros := jsonutil.MappingErrors(validationErrors)
+		return c.Status(http.StatusBadRequest).JSON(jsonutil.ValidationErrorResponse(fiber.Map{
+			"errors": mappingErros,
+		}))
+	}
+
+	err = dh.orderService.DeleteDetailOrder(ctx, &req)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).
+			JSON(jsonutil.ErrorResponse("Failed to delete detail order"))
+	}
+
+	return c.Status(http.StatusOK).
+		JSON(jsonutil.SuccessResponse("Delete detail order successfully", ""))
 }

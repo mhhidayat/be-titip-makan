@@ -104,3 +104,20 @@ func (dr *orderRepository) Order(ctx context.Context, orderRequest *OrderRequest
 		Detail:      createOrderDetail,
 	}, nil
 }
+
+func (dr *orderRepository) DeleteDetailOrder(ctx context.Context, deleteOrderDetail *DeleteDetailOrder) error {
+
+	expresion := goqu.Ex{
+		"order_number": deleteOrderDetail.OrderNumber,
+		"menu_id":      deleteOrderDetail.MenuID,
+	}
+
+	if _, err := dr.db.Delete("tr_order_details").
+		Where(expresion).
+		Executor().
+		ExecContext(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -35,3 +35,8 @@ type CreateOrderData struct {
 	CreateOrder CreateOrder         `json:"create_order"`
 	Detail      []CreateOrderDetail `json:"detail"`
 }
+
+type DeleteDetailOrder struct {
+	OrderNumber string `json:"order_number" validate:"required"`
+	MenuID      string `json:"menu_id" validate:"required"`
+}
