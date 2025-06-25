@@ -3,6 +3,7 @@ package main
 import (
 	"be-titip-makan/configs"
 	"be-titip-makan/internal/db"
+	"be-titip-makan/internal/feature/askai"
 	"be-titip-makan/internal/feature/auth"
 	"be-titip-makan/internal/feature/order"
 	"be-titip-makan/internal/feature/user"
@@ -38,6 +39,8 @@ func main() {
 	orderService := order.NewOrderService(orderRepository)
 
 	order.NewOrder(protected, orderService, validate)
+
+	askai.NewAskAI(protected, validate)
 
 	app.Listen(":3000")
 }
