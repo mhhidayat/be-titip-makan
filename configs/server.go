@@ -4,6 +4,7 @@ type Config struct {
 	Server   Server
 	Database Database
 	Auth     Auth
+	AI       AI
 }
 
 type Server struct {
@@ -12,8 +13,4 @@ type Server struct {
 
 type Database struct {
 	Host, Port, Name, User, Pass, Tz string
-}
-
-type Auth struct {
-	JwtScret, JwtET string
 }

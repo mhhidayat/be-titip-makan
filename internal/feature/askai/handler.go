@@ -1,6 +1,7 @@
 package askai
 
 import (
+	"be-titip-makan/configs"
 	"be-titip-makan/internal/jsonutil"
 	"context"
 	"fmt"
@@ -15,11 +16,13 @@ import (
 
 type askaiHandler struct {
 	validate *validator.Validate
+	configAI *configs.AI
 }
 
-func NewAskAI(router fiber.Router, validate *validator.Validate) {
+func NewAskAI(router fiber.Router, configAI *configs.AI, validate *validator.Validate) {
 	ah := askaiHandler{
 		validate: validate,
+		configAI: configAI,
 	}
 
 	router.Get("/ask-ai", ah.askAI)
@@ -52,7 +55,7 @@ func (ah *askaiHandler) askAI(c *fiber.Ctx) error {
 
 func (ah *askaiHandler) generateAIResponse(ctx context.Context, prompt string, c chan string) {
 	client, err := genai.NewClient(ctx, &genai.ClientConfig{
-		APIKey:  "RAHASIA",
+		APIKey:  ah.configAI.ApiKey,
 		Backend: genai.BackendGeminiAPI,
 	})
 	if err != nil {
@@ -60,7 +63,7 @@ func (ah *askaiHandler) generateAIResponse(ctx context.Context, prompt string, c
 	}
 	result, err := client.Models.GenerateContent(
 		ctx,
-		"gemini-2.5-flash-lite-preview-06-17",
+		ah.configAI.Model,
 		genai.Text(fmt.Sprintf(
 			"Jawab hanya jika pertanyaan berikut berkaitan dengan makanan. Jika tidak, balas dengan: 'Maaf, saya hanya dapat menjawab pertanyaan seputar makanan.' Pertanyaannya: %s", prompt)),
 		nil,

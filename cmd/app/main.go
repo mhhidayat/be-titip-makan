@@ -40,7 +40,7 @@ func main() {
 
 	order.NewOrder(protected, orderService, validate)
 
-	askai.NewAskAI(protected, validate)
+	askai.NewAskAI(protected, &conf.AI, validate)
 
 	app.Listen(":3000")
 }

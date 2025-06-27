@@ -31,6 +31,10 @@ func Get() *Config {
 			JwtScret: os.Getenv("JWT_SECRET"),
 			JwtET:    os.Getenv("JWT_ET"),
 		},
+		AI: AI{
+			ApiKey: os.Getenv("GEMINI_API_KEY"),
+			Model:  os.Getenv("GEMINI_MODEL"),
+		},
 	}
 
 }
