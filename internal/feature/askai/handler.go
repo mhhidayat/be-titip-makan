@@ -4,7 +4,6 @@ import (
 	"be-titip-makan/configs"
 	"be-titip-makan/internal/jsonutil"
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -61,12 +60,16 @@ func (ah *askaiHandler) generateAIResponse(ctx context.Context, prompt string, c
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	config := &genai.GenerateContentConfig{
+		SystemInstruction: genai.NewContentFromText("Jawab hanya jika pertanyaan berikut berkaitan dengan makanan. Jika tidak, balas dengan: 'Maaf, saya hanya dapat menjawab pertanyaan seputar makanan", genai.RoleUser),
+	}
+
 	result, err := client.Models.GenerateContent(
 		ctx,
 		ah.configAI.Model,
-		genai.Text(fmt.Sprintf(
-			"Jawab hanya jika pertanyaan berikut berkaitan dengan makanan. Jika tidak, balas dengan: 'Maaf, saya hanya dapat menjawab pertanyaan seputar makanan.' Pertanyaannya: %s", prompt)),
-		nil,
+		genai.Text(prompt),
+		config,
 	)
 	if err != nil {
 		log.Fatal(err)
