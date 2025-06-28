@@ -13,4 +13,5 @@ type OrderService interface {
 	ListMenuByRestaurant(ctx context.Context, restaurantId string) (*[]menu.MenuData, error)
 	Order(ctx context.Context, orderRequest *OrderRequest) (*CreateOrderData, error)
 	DeleteDetailOrder(ctx context.Context, deleteOrderDetail *DeleteDetailOrder) error
+	DeleteOrder(ctx context.Context, deleteOrder *DeleteOrder) error
 }

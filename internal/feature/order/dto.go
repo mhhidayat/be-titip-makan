@@ -40,3 +40,7 @@ type DeleteDetailOrder struct {
 	OrderNumber string `json:"order_number" validate:"required"`
 	MenuID      string `json:"menu_id" validate:"required"`
 }
+
+type DeleteOrder struct {
+	OrderNumber string `json:"order_number" validate:"required"`
+}

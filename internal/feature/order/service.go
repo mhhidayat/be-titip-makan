@@ -85,3 +85,11 @@ func (os *orderService) DeleteDetailOrder(ctx context.Context, deleteOrderDetail
 	}
 	return nil
 }
+
+func (os *orderService) DeleteOrder(ctx context.Context, deleteOrder *DeleteOrder) error {
+	err := os.orderRepository.DeleteOrder(ctx, deleteOrder)
+	if err != nil {
+		return err
+	}
+	return nil
+}
